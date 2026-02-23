@@ -23,7 +23,7 @@
 			position: absolute;
 			top: 0; left: 0; bottom: 0; right: 0;
 			background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-						linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+						linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 255, 0, 0.06));
 			z-index: 100;
 			background-size: 100% 4px, 3px 100%;
 			pointer-events: none;
@@ -48,12 +48,18 @@
 			pointer-events: none;
 			/* Higher z-index to stay above vignette */
 			z-index: 10;
+			/* Mobile constraint */
+			width: 100%;
+			max-width: 100vw;
+			box-sizing: border-box;
+			padding: 0 1rem;
 		}
 
 		h1 { 
-			font-size: 5rem; 
+			/* Fluid size and spacing to prevent mobile cutoff */
+			font-size: clamp(2.2rem, 10vw, 5rem); 
 			margin: 0; 
-			letter-spacing: 1.8rem; 
+			letter-spacing: clamp(0.4rem, 4vw, 1.8rem); 
 			font-weight: 100; 
 			color: #fff;
 			text-shadow: 
@@ -62,11 +68,13 @@
 				0 0 20px var(--neon-pink);
 			opacity: 0.9;
 			animation: glitch 4s infinite linear alternate-reverse, flicker 1.5s infinite;
+			white-space: nowrap;
 		}
 
 		p { 
-			font-size: 1.1rem; 
-			letter-spacing: 0.7rem; 
+			/* Fluid scaling for subtext */
+			font-size: clamp(0.7rem, 2.5vw, 1.1rem); 
+			letter-spacing: clamp(0.2rem, 2vw, 0.7rem); 
 			text-transform: uppercase; 
 			margin-top: 1.5rem; 
 			color: var(--neon-cyan);
@@ -77,10 +85,11 @@
 		}
 
 		.coming-soon {
-			font-size: 0.8rem; 
+			/* Fluid scaling for footer text */
+			font-size: clamp(0.5rem, 2vw, 0.8rem); 
 			margin-top: 5rem; 
 			opacity: 0.8;
-			letter-spacing: 1rem;
+			letter-spacing: clamp(0.3rem, 2vw, 1rem);
 			color: #fff;
 			font-weight: bold;
 			text-shadow: 0 0 10px #fff, 0 0 5px var(--neon-pink);
@@ -268,10 +277,16 @@
 		const points = new THREE.Points(geometry, material);
 		scene.add(points);
 
-		window.addEventListener('mousemove', (e) => {
-			material.uniforms.uMouse.value.x = (e.clientX / window.innerWidth) * 2 - 1;
-			material.uniforms.uMouse.value.y = -(e.clientY / window.innerHeight) * 2 + 1;
-		});
+		// Handle both Mouse and Touch
+		function handleInteraction(x, y) {
+			material.uniforms.uMouse.value.x = (x / window.innerWidth) * 2 - 1;
+			material.uniforms.uMouse.value.y = -(y / window.innerHeight) * 2 + 1;
+		}
+
+		window.addEventListener('mousemove', (e) => handleInteraction(e.clientX, e.clientY));
+		window.addEventListener('touchmove', (e) => {
+			if (e.touches.length > 0) handleInteraction(e.touches[0].clientX, e.touches[0].clientY);
+		}, { passive: true });
 
 		function animate(time) {
 			const t = time * 0.001;
