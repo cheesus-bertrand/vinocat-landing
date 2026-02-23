@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>VINOCAT | Pairing Engine</title>
+	<style>
+		:root {
+			--neon-pink: #ff00ff;
+			--neon-cyan: #00ffff;
+		}
+
+		body { 
+			margin: 0; 
+			overflow: hidden; 
+			background: #05000a; 
+			font-family: 'Courier New', monospace; 
+		}
+
+		/* Scanline & Grain Overlay */
+		body::before {
+			content: " ";
+			position: absolute;
+			top: 0; left: 0; bottom: 0; right: 0;
+			background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+						linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+			z-index: 100;
+			background-size: 100% 4px, 3px 100%;
+			pointer-events: none;
+		}
+
+		/* Vignette to focus center */
+		body::after {
+			content: " ";
+			position: absolute;
+			top: 0; left: 0; width: 100%; height: 100%;
+			background: radial-gradient(circle, transparent 40%, rgba(5, 0, 10, 0.9) 100%);
+			z-index: 5;
+			pointer-events: none;
+		}
+
+		#ui {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			text-align: center;
+			pointer-events: none;
+			/* Higher z-index to stay above vignette */
+			z-index: 10;
+		}
+
+		h1 { 
+			font-size: 5rem; 
+			margin: 0; 
+			letter-spacing: 1.8rem; 
+			font-weight: 100; 
+			color: #fff;
+			text-shadow: 
+				-2px -2px 0 var(--neon-cyan), 
+				2px 2px 0 var(--neon-pink),
+				0 0 20px var(--neon-pink);
+			opacity: 0.9;
+			animation: glitch 4s infinite linear alternate-reverse, flicker 1.5s infinite;
+		}
+
+		p { 
+			font-size: 1.1rem; 
+			letter-spacing: 0.7rem; 
+			text-transform: uppercase; 
+			margin-top: 1.5rem; 
+			color: var(--neon-cyan);
+			font-weight: 900;
+			/* Increased brightness and shadow spread for legibility without background blocks */
+			text-shadow: 0 0 12px var(--neon-cyan), 0 0 2px #000;
+			opacity: 1;
+		}
+
+		.coming-soon {
+			font-size: 0.8rem; 
+			margin-top: 5rem; 
+			opacity: 0.8;
+			letter-spacing: 1rem;
+			color: #fff;
+			font-weight: bold;
+			text-shadow: 0 0 10px #fff, 0 0 5px var(--neon-pink);
+		}
+
+		@keyframes flicker {
+			0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% { opacity: 0.99; }
+			20%, 21.999%, 63%, 63.999%, 65%, 69.999% { opacity: 0.4; }
+		}
+
+		@keyframes glitch {
+			0% { transform: skew(0deg); }
+			2% { transform: skew(3deg); }
+			4% { transform: skew(-3deg); }
+			6% { transform: skew(0deg); }
+			100% { transform: skew(0deg); }
+		}
+	</style>
+</head>
+<body>
+
+	<div id="ui">
+		<h1 id="title">VINOCAT</h1>
+		<p>Data-driven food & drink pairing</p>
+		<p class="coming-soon">Coming soon</p>
+	</div>
+
+	<script type="importmap">
+		{
+			"imports": {
+				"three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+			}
+		}
+	</script>
+
+	<script type="module">
+		import * as THREE from 'three';
+
+		const scene = new THREE.Scene();
+		const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+		camera.position.z = 7;
+		
+		const renderer = new THREE.WebGLRenderer({ antialias: true });
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+		document.body.appendChild(renderer.domElement);
+
+		const count = 25000; 
+		const posVapor = new Float32Array(count * 3);
+		const posLogo = new Float32Array(count * 3);
+		const randoms = new Float32Array(count);
+
+		function bowlWidth(t) {
+			const curved = Math.pow(t, 0.6);
+			return 1.6 * curved;
+		}
+
+		const BOWL_BOTTOM = -0.8;
+		const BOWL_TOP    =  1.8;
+		const rimHalfWidth = bowlWidth(1.0);
+
+		for(let i = 0; i < count; i++) {
+			posVapor[i*3]   = (Math.random() - 0.5) * 15;
+			posVapor[i*3+1] = (Math.random() - 0.5) * 15;
+			posVapor[i*3+2] = (Math.random() - 0.5) * 5;
+
+			randoms[i] = Math.random();
+
+			let x, y, z = (Math.random() - 0.5) * 0.1;
+			const r = Math.random();
+
+			if (r < 0.60) {
+				const t    = Math.random();
+				const bowlY = BOWL_BOTTOM + t * (BOWL_TOP - BOWL_BOTTOM);
+				const hw    = bowlWidth(t);
+				if (Math.random() < 0.70) {
+					const side  = Math.random() > 0.5 ? 1 : -1;
+					const edgeNoise = Math.random() * 0.06;
+					x = (hw - edgeNoise) * side;
+				} else {
+					x = (Math.random() * 2 - 1) * hw;
+				}
+				y = bowlY;
+			} else if (r < 0.67) {
+				const side = Math.random() > 0.5 ? 1 : -1;
+				x = (Math.random() * rimHalfWidth) * side;
+				y = BOWL_TOP + (Math.random() - 0.5) * 0.07;
+			} else if (r < 0.82) {
+				x = (Math.random() - 0.5) * 0.09;
+				y = Math.random() * 1.7 - 2.5;
+			} else if (r < 0.88) {
+				x = (Math.random() - 0.5) * 2.8;
+				y = -2.5 + (Math.random() - 0.5) * 0.10;
+			} else {
+				const EAR_HALF_BASE = 0.42;
+				const EAR_HEIGHT    = 0.85;
+				const EAR_CENTRE_X  = rimHalfWidth * 0.48;
+				const side = Math.random() > 0.5 ? 1.0 : -1.0;
+				const centreX = EAR_CENTRE_X * side;
+				let u = Math.random(), v = Math.random();
+				if (u + v > 1.0) { u = 1.0 - u; v = 1.0 - v; }
+				const heightFrac = u;
+				const spreadFrac = v;
+				const sliceHalfWidth = EAR_HALF_BASE * (1.0 - heightFrac);
+				x = centreX + (spreadFrac * 2.0 - 1.0) * sliceHalfWidth * side;
+				y = BOWL_TOP + heightFrac * EAR_HEIGHT;
+				if (Math.random() < 0.35) {
+					const edgeSide = Math.random() > 0.5 ? 1 : -1;
+					x = centreX + edgeSide * sliceHalfWidth * side;
+				}
+			}
+
+			posLogo[i*3]   = x;
+			posLogo[i*3+1] = y;
+			posLogo[i*3+2] = z;
+		}
+
+		const geometry = new THREE.BufferGeometry();
+		geometry.setAttribute('position', new THREE.BufferAttribute(posVapor, 3));
+		geometry.setAttribute('targetPosition', new THREE.BufferAttribute(posLogo, 3));
+		geometry.setAttribute('aRandom', new THREE.BufferAttribute(randoms, 1));
+
+		const vertexShader = `
+			uniform float uTime;
+			uniform float uMorph;
+			uniform vec2 uMouse;
+			attribute vec3 targetPosition;
+			attribute float aRandom;
+			varying float vGlow;
+			varying float vRandom;
+			void main() {
+				vRandom = aRandom;
+				vec3 pos = position;
+				float drift = uTime * 0.3;
+				pos.y += mod(drift + pos.x * 0.5, 12.0) - 6.0;
+				pos.x += sin(uTime + pos.y) * 0.4;
+				vec3 finalPos = mix(pos, targetPosition, uMorph);
+				float dist = distance(finalPos.xy, uMouse * 6.0);
+				if(dist < 2.0) {
+					finalPos.xyz += normalize(finalPos - vec3(uMouse * 6.0, 0.0)) * (2.0 - dist) * 0.8;
+				}
+				vec4 mvPosition = modelViewMatrix * vec4(finalPos, 1.0);
+				gl_PointSize = (22.0 / -mvPosition.z) * (0.7 + sin(uTime * 1.5 + float(gl_VertexID)) * 0.3);
+				gl_Position = projectionMatrix * mvPosition;
+				vGlow = gl_PointSize;
+			}
+		`;
+
+		const fragmentShader = `
+			varying float vGlow;
+			varying float vRandom;
+			void main() {
+				float d = distance(gl_PointCoord, vec2(0.5));
+				if(d > 0.5) discard;
+				vec3 pink = vec3(1.0, 0.0, 0.5); 
+				vec3 cyan = vec3(0.0, 1.0, 1.0);
+				vec3 color = mix(pink, cyan, vRandom);
+				gl_FragColor = vec4(color, 0.8 * (0.5 - d));
+			}
+		`;
+
+		const material = new THREE.ShaderMaterial({
+			uniforms: {
+				uTime: { value: 0 },
+				uMorph: { value: 0 },
+				uMouse: { value: new THREE.Vector2(10, 10) }
+			},
+			vertexShader,
+			fragmentShader,
+			transparent: true,
+			blending: THREE.AdditiveBlending,
+			depthWrite: false
+		});
+
+		const points = new THREE.Points(geometry, material);
+		scene.add(points);
+
+		window.addEventListener('mousemove', (e) => {
+			material.uniforms.uMouse.value.x = (e.clientX / window.innerWidth) * 2 - 1;
+			material.uniforms.uMouse.value.y = -(e.clientY / window.innerHeight) * 2 + 1;
+		});
+
+		function animate(time) {
+			const t = time * 0.001;
+			material.uniforms.uTime.value = t;
+			const morphCycle = Math.sin(t * (Math.PI * 2 / 15)) * 0.5 + 0.5;
+			const m = Math.pow(morphCycle, 3.0);
+			material.uniforms.uMorph.value = m;
+			points.rotation.y = (1.0 - m) * Math.sin(t * 0.1) * 0.5;
+			renderer.render(scene, camera);
+			requestAnimationFrame(animate);
+		}
+
+		window.addEventListener('resize', () => {
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+			renderer.setSize(window.innerWidth, window.innerHeight);
+		});
+
+		requestAnimationFrame(animate);
+	</script>
+</body>
+</html>
