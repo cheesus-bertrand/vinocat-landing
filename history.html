@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vinocat // Project Log</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="image-overlay">
+        <img id="overlay-img" src="" alt="Full Size View">
+    </div>
+
+    <nav class="nav-sidebar">
+        <div class="nav-group">
+            <div class="group-label">Core</div>
+            <div class="group-links">
+                <a href="index.html" class="primary-link">Return</a>
+            </div>
+        </div>
+        <div class="nav-group">
+            <div class="group-label">Labs</div>
+            <div class="group-links">
+                <a href="https://cellar3d.vercel.app" class="poc-link">3D Cellar POC</a>
+            </div>
+        </div>
+    </nav>
+
+    <div id="ui-history">
+        <h1>PROJECT LOG</h1>
+        
+        <div class="stack-bar">
+            <div class="stack-label">Active Stack</div>
+            <div class="stack-logos">
+                <div class="stack-logo-item">Node</div>
+                <div class="stack-logo-item">Express</div>
+                <div class="stack-logo-item">Mongo</div>
+                <div class="stack-logo-item">Redis</div>
+                <div class="stack-logo-item">Brain.js</div>
+                <div class="stack-logo-item">Svelte</div>
+            </div>
+        </div>
+        
+        <div class="timeline-container">
+            <div class="event">
+                <div class="event-meta">April 2025 // v 0.0.1</div>
+                <div class="event-title">// Genesis</div>
+                <div class="event-description">
+                    Hardcoded pairing engine. Dataset limited to < 30 entities (Wine/Dish). Baseline validation of compatibility via < 12 basic pairing rules.
+                </div>
+                <div class="screenshot">
+                    <img src="assets/genesis.jpg" alt="Vinocat Genesis v0.0.1">
+                </div>
+            </div>
+
+            <div class="event">
+                <div class="event-meta">April 2026 // v 0.6.1</div>
+                <div class="event-title">// Current State</div>
+                <div class="event-description">
+                    Dataset contains 850+ entities (Wine, Beer, Dish, Cheese). <br><br>
+                    Dual-layer scoring engine: Objective compatibility via 56 granular, property-weighted heuristic rules; Subjective personalization via high-dimensional taste-vector association (Collaborative ML).
+                </div>
+                <div class="screenshot">
+                    <img src="assets/current.png" alt="Vinocat Current v0.6.1">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+            }
+        }
+    </script>
+
+    <script type="module" src="script.js"></script>
+
+    <script>
+        const overlay = document.getElementById('image-overlay');
+        const overlayImg = document.getElementById('overlay-img');
+        const screenshots = document.querySelectorAll('.screenshot img');
+
+        screenshots.forEach(img => {
+            img.addEventListener('click', () => {
+                overlayImg.src = img.src;
+                overlay.classList.add('active');
+            });
+        });
+
+        overlay.addEventListener('click', () => {
+            overlay.classList.remove('active');
+        });
+    </script>
+</body>
+</html>
