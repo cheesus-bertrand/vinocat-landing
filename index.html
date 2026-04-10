@@ -5,14 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vinocat</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+
+    </style>
 </head>
 <body>
-
-    <nav class="nav-sidebar">
+    <div class="nav-toggle-container">
+        <button class="nav-toggle primary-link" onclick="toggleNav()">
+            ✦ MENU ✦
+        </button>
+    </div>
+    <nav class="nav-sidebar" id="sidebar">
         <div class="nav-group">
             <div class="group-label">Core</div>
             <div class="group-links">
-                <a href="history.html" class="primary-link">Project Log</a>
+                <a href="https://vinocat.shares.zrok.io" id="vmk-link" class="primary-link disabled">
+                    <span class="link-status-dot"></span>
+                    Dashboard
+                </a>
             </div>
         </div>
         
@@ -22,18 +32,82 @@
                 <a href="https://cellar3d.vercel.app" class="poc-link">3D Cellar POC</a>
             </div>
         </div>
+
+        <div class="nav-group">
+            <div class="group-label">About</div>
+            <div class="group-links">
+                <a href="history.html" class="primary-link">Project Log</a>
+                <a href="mailto:cat@vinocat.io" class="primary-link">Contact</a>
+                <a href="#" class="primary-link disabled">Funding</a>
+            </div>
+        </div>
     </nav>
 
     <div id="ui-home">
         <h1 id="title">VINOCAT</h1>
         <p>Data-driven food & drink pairing</p>
-        <p class="coming-soon">Coming soon</p>
+        <p id="system-status" class="coming-soon">INITIALIZING_VMK_HANDSHAKE...</p>
     </div>
 
     <footer class="system-footer">
-        <span class="status-indicator"></span> 
-        <a href="mailto:cat@vinocat.io">cat@vinocat.io</a>
     </footer>
+
+    <script>
+        function toggleNav() {
+            const nav = document.getElementById('sidebar');
+            const btn = document.querySelector('.nav-toggle');
+            
+            nav.classList.toggle('active');
+            document.body.classList.toggle('nav-open');
+            
+            if (nav.classList.contains('active')) {
+                btn.innerText = '✦ CLOSE ✦';
+                btn.style.borderRightColor = 'var(--neon-cyan)';
+            } else {
+                btn.innerText = '✦ MENU ✦';
+                btn.style.borderRightColor = 'var(--neon-pink)';
+            }
+        }
+
+        async function checkVMK() {
+            const link = document.getElementById('vmk-link');
+            const statusText = document.getElementById('system-status');
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 2000);
+
+            try {
+                const res = await fetch('https://vinocat.shares.zrok.io/api/status', {
+                    method: 'GET',
+                    signal: controller.signal,
+                    headers: { 'x-vinocat-client': 'VINOCAT_DASH_ALPHA_2026' }
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.status === 'ONLINE') {
+                        link.classList.remove('disabled');
+                        statusText.innerText = '[ UPLINK_ESTABLISHED ]';
+                        statusText.style.color = '#fff'; 
+                        statusText.style.opacity = '1';
+                        statusText.style.textShadow = '0 0 10px var(--neon-cyan), 0 0 20px rgba(0, 255, 255, 0.5)';
+                    }
+                } else {
+                    statusText.innerText = '[ NODE_MAINTENANCE ]';
+                    statusText.style.color = '#fff';
+                    statusText.style.opacity = '1';
+                    statusText.style.textShadow = '0 0 10px var(--neon-pink), 0 0 20px rgba(255, 0, 255, 0.5)';
+                }
+            } catch (e) {
+                statusText.innerText = '[ NODE_MAINTENANCE ]';
+                statusText.style.color = '#fff';
+                statusText.style.opacity = '1';
+                statusText.style.textShadow = '0 0 10px var(--neon-pink), 0 0 20px rgba(255, 0, 255, 0.5)';
+            } finally {
+                clearTimeout(timeout);
+            }
+        }
+        checkVMK();
+    </script>
 
     <script type="importmap">
         {
