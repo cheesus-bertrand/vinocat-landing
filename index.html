@@ -1,122 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Vinocat</title>
-    <link rel="stylesheet" href="style.css?v=1.0.1">
-    <style>
-
-    </style>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<title>Vinocat</title>
+	<link rel="stylesheet" href="style.css?v=1.0.1">
+	<style>
+		.main-action-container {
+			margin-top: 2.5rem;
+			display: flex;
+			justify-content: center;
+			width: 100%;
+		}
+		#main-dash-btn {
+			max-width: 400px;
+		}
+	</style>
 </head>
 <body>
-    <div class="nav-toggle-container">
-        <button class="nav-toggle primary-link" onclick="toggleNav()">
-            ✦ MENU ✦
-        </button>
-    </div>
-    <nav class="nav-sidebar" id="sidebar">
-        <div class="nav-group">
-            <div class="group-label">Core</div>
-            <div class="group-links">
-                <a href="https://vinocat.shares.zrok.io" id="vmk-link" class="primary-link disabled">
-                    <span class="link-status-dot"></span>
-                    Dashboard
-                </a>
-            </div>
-        </div>
-        
-        <div class="nav-group">
-            <div class="group-label">Labs</div>
-            <div class="group-links">
-                <a href="https://cellar3d.vercel.app" class="poc-link">3D Cellar POC</a>
-            </div>
-        </div>
+	<div class="nav-toggle-container">
+		<button class="nav-toggle primary-link" onclick="toggleNav()">
+			✦ MENU ✦
+		</button>
+	</div>
 
-        <div class="nav-group">
-            <div class="group-label">About</div>
-            <div class="group-links">
-                <a href="history.html" class="primary-link">Project Log</a>
-                <a href="mailto:cat@vinocat.io" class="primary-link">Contact</a>
-                <a href="#" class="primary-link disabled">Funding</a>
-            </div>
-        </div>
-    </nav>
+	<nav class="nav-sidebar" id="sidebar">
+		<div class="nav-group">
+			<div class="group-label">Labs</div>
+			<div class="group-links">
+				<a href="https://cellar3d.vercel.app" class="poc-link">3D Cellar POC</a>
+			</div>
+		</div>
 
-    <div id="ui-home">
-        <h1 id="title">VINOCAT</h1>
-        <p>Data-driven food & drink pairing</p>
-        <p id="system-status" class="coming-soon">INITIALIZING_VMK_HANDSHAKE...</p>
-    </div>
+		<div class="nav-group">
+			<div class="group-label">Info</div>
+			<div class="group-links">
+				<a href="history.html" class="primary-link">Technical</a>
+				<a href="mailto:cat@vinocat.io" class="primary-link">Contact</a>
+				<a href="#" class="primary-link disabled">Funding</a>
+			</div>
+		</div>
+	</nav>
 
-    <footer class="system-footer">
-    </footer>
+	<div id="ui-home">
+		<h1 id="title">VINOCAT</h1>
+		<p>Data-driven food & drink pairing</p>
+		
+		<div class="main-action-container">
+			<a 
+				href="https://vinocat.shares.zrok.io/dashboard" 
+				id="main-dash-btn" 
+				class="base-btn btn-disabled"
+			>
+				<span class="btn-label">✦ INITIALIZING... ✦</span>
+				<span id="system-status" class="btn-detail">AWAITING_UPLINK</span>
+			</a>
+		</div>
+	</div>
 
-    <script>
-        function toggleNav() {
-            const nav = document.getElementById('sidebar');
-            const btn = document.querySelector('.nav-toggle');
-            
-            nav.classList.toggle('active');
-            document.body.classList.toggle('nav-open');
-            
-            if (nav.classList.contains('active')) {
-                btn.innerText = '✦ CLOSE ✦';
-                btn.style.borderRightColor = 'var(--neon-cyan)';
-            } else {
-                btn.innerText = '✦ MENU ✦';
-                btn.style.borderRightColor = 'var(--neon-pink)';
-            }
-        }
+	<footer class="system-footer">
+	</footer>
 
-        async function checkVMK() {
-            const link = document.getElementById('vmk-link');
-            const statusText = document.getElementById('system-status');
-            const controller = new AbortController();
-            const timeout = setTimeout(() => controller.abort(), 2000);
+	<script>
+		function toggleNav() {
+			const nav = document.getElementById('sidebar');
+			const btn = document.querySelector('.nav-toggle');
+			
+			nav.classList.toggle('active');
+			document.body.classList.toggle('nav-open');
+			
+			if (nav.classList.contains('active')) {
+				btn.innerText = '✦ CLOSE ✦';
+				btn.classList.add('is-active');
+			} else {
+				btn.innerText = '✦ MENU ✦';
+				btn.classList.remove('is-active');
+			}
+		}
 
-            try {
-                const res = await fetch('https://vinocat.shares.zrok.io/api/status', {
-                    method: 'GET',
-                    signal: controller.signal,
-                    headers: { 'x-vinocat-client': 'VINOCAT_DASH_ALPHA_2026' }
-                });
+		async function checkVMK() {
+			const mainBtn = document.getElementById('main-dash-btn');
+			const statusText = document.getElementById('system-status');
+			const btnLabel = mainBtn.querySelector('.btn-label');
+			
+			const controller = new AbortController();
+			const timeout = setTimeout(() => controller.abort(), 2000);
 
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.status === 'ONLINE') {
-                        link.classList.remove('disabled');
-                        statusText.innerText = '[ UPLINK_ESTABLISHED ]';
-                        statusText.style.color = '#fff'; 
-                        statusText.style.opacity = '1';
-                        statusText.style.textShadow = '0 0 10px var(--neon-cyan), 0 0 20px rgba(0, 255, 255, 0.5)';
-                    }
-                } else {
-                    statusText.innerText = '[ NODE_MAINTENANCE ]';
-                    statusText.style.color = '#fff';
-                    statusText.style.opacity = '1';
-                    statusText.style.textShadow = '0 0 10px var(--neon-pink), 0 0 20px rgba(255, 0, 255, 0.5)';
-                }
-            } catch (e) {
-                statusText.innerText = '[ NODE_MAINTENANCE ]';
-                statusText.style.color = '#fff';
-                statusText.style.opacity = '1';
-                statusText.style.textShadow = '0 0 10px var(--neon-pink), 0 0 20px rgba(255, 0, 255, 0.5)';
-            } finally {
-                clearTimeout(timeout);
-            }
-        }
-        checkVMK();
-    </script>
+			try {
+				const res = await fetch('https://vinocat.shares.zrok.io/api/status', {
+					method: 'GET',
+					signal: controller.signal,
+					headers: { 'x-vinocat-client': 'VINOCAT_DASH_ALPHA_2026' }
+				});
 
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
-            }
-        }
-    </script>
+				if (res.ok) {
+					const data = await res.json();
+					if (data.status === 'ONLINE') {
+						const version = data.version || 'v?.?.?';
+						mainBtn.classList.remove('btn-disabled', 'support-link');
+						mainBtn.classList.add('active-link');
+						btnLabel.innerText = '✦ ENTER DASHBOARD ✦';
+						// Displays the version in the status line
+						statusText.innerText = `[ ${version} // ONLINE ]`;
+						return;
+					}
+				}
+				throw new Error('Maintenance');
+			} catch (e) {
+				mainBtn.classList.remove('btn-disabled', 'active-link');
+				mainBtn.classList.add('support-link');
+				btnLabel.innerText = '✦ NODE OFFLINE ✦';
+				statusText.innerText = '[ SYSTEM_MAINTENANCE_IN_PROGRESS ]';
+				
+				mainBtn.addEventListener('click', (event) => {
+					event.preventDefault();
+				});
+			} finally {
+				clearTimeout(timeout);
+			}
+		}
+		
+		checkVMK();
+	</script>
 
-    <script type="module" src="script.js"></script>
+	<script type="importmap">
+		{
+			"imports": {
+				"three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+			}
+		}
+	</script>
+
+	<script type="module" src="script.js"></script>
 </body>
 </html>

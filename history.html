@@ -1,98 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vinocat // Project Log</title>
-    <link rel="stylesheet" href="style.css">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Vinocat // Technical</title>
+	<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div id="image-overlay">
-        <img id="overlay-img" src="" alt="Full Size View">
-    </div>
+	<div class="nav-toggle-container">
+		<button class="nav-toggle primary-link" onclick="toggleNav()">
+			✦ MENU ✦
+		</button>
+	</div>
 
-    <nav class="nav-sidebar">
-        <div class="nav-group">
-            <div class="group-label">Core</div>
-            <div class="group-links">
-                <a href="index.html" class="primary-link">Return</a>
-            </div>
-        </div>
-        <div class="nav-group">
-            <div class="group-label">Labs</div>
-            <div class="group-links">
-                <a href="https://cellar3d.vercel.app" class="poc-link">3D Cellar POC</a>
-            </div>
-        </div>
-    </nav>
+	<div id="image-overlay">
+		<img id="overlay-img" src="" alt="Full Size View">
+	</div>
 
-    <div id="ui-history">
-        <h1>PROJECT LOG</h1>
-        
-        <div class="stack-bar">
-            <div class="stack-label">Active Stack</div>
-            <div class="stack-logos">
-                <div class="stack-logo-item">Node</div>
-                <div class="stack-logo-item">Express</div>
-                <div class="stack-logo-item">Mongo</div>
-                <div class="stack-logo-item">Redis</div>
-                <div class="stack-logo-item">Brain.js</div>
-                <div class="stack-logo-item">Svelte</div>
-            </div>
-        </div>
-        
-        <div class="timeline-container">
-            <div class="event">
-                <div class="event-meta">April 2025 // v 0.0.1</div>
-                <div class="event-title">// Genesis</div>
-                <div class="event-description">
-                    Hardcoded pairing engine. Dataset limited to < 30 entities (Wine/Dish). Baseline validation of compatibility via < 12 basic pairing rules.
-                </div>
-                <div class="screenshot">
-                    <img src="assets/genesis.jpg" alt="Vinocat Genesis v0.0.1">
-                </div>
-            </div>
+	<nav class="nav-sidebar" id="sidebar">
+		<div class="nav-group">
+			<div class="group-label">Labs</div>
+			<div class="group-links">
+				<a href="https://cellar3d.vercel.app" class="poc-link">3D Cellar POC</a>
+			</div>
+		</div>
 
-            <div class="event">
-                <div class="event-meta">April 2026 // v 0.6.1</div>
-                <div class="event-title">// Current State</div>
-                <div class="event-description">
-                    Dataset contains 850+ entities (Wine, Beer, Dish, Cheese). <br><br>
-                    Dual-layer scoring engine: Objective compatibility via 56 granular, property-weighted heuristic rules; Subjective personalization via high-dimensional taste-vector association (Collaborative ML). Heuristic and ML powered recipe analysis gives instant and explainable pairing recommendations.
-                </div>
-                <div class="screenshot">
-                    <img src="assets/current.png" alt="Vinocat Current v0.6.1">
-                </div>
-            </div>
-        </div>
-    </div>
+		<div class="nav-group">
+			<div class="group-label">Info</div>
+			<div class="group-links">
+				<a href="index.html" class="primary-link">Return</a>
+				<a href="mailto:cat@vinocat.io" class="primary-link">Contact</a>
+				<a href="#" class="primary-link disabled">Funding</a>
+			</div>
+		</div>
+	</nav>
 
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
-            }
-        }
-    </script>
+	<div id="ui-history">
+		<h1>TECHNICAL</h1>
+		
+		<div class="stack-bar">
+			<div class="stack-label">Active Stack</div>
+			<div class="stack-logos">
+				<div class="stack-logo-item">Node</div>
+				<div class="stack-logo-item">Express</div>
+				<div class="stack-logo-item">Mongo</div>
+				<div class="stack-logo-item">Redis</div>
+				<div class="stack-logo-item">Brain.js</div>
+				<div class="stack-logo-item">Svelte</div>
+			</div>
+		</div>
 
-    <script type="module" src="script.js"></script>
+		<!-- VERTICAL EVOLUTION ROADMAP -->
+		<div class="evolution-container-v">
+			<div class="evo-block stable">
+				<div class="evo-header">[ V1.0: ARCHITECTURE ]</div>
+				<div class="evo-description-text">
+					Vinocat is a bidirectional decision engine for food and wine pairing, allowing users to start from a dish or a wine. It translates dishes into structured flavour profiles and aligns wines to the same model to generate ranked, explainable pairings based on compatibility and user preference signals.
+				</div>
+			</div>
 
-    <script>
-        const overlay = document.getElementById('image-overlay');
-        const overlayImg = document.getElementById('overlay-img');
-        const screenshots = document.querySelectorAll('.screenshot img');
+			<div class="evo-bridge-v">
+				<div class="bridge-line-v"></div>
+				<div class="bridge-arrow-v">▼</div>
+			</div>
 
-        screenshots.forEach(img => {
-            img.addEventListener('click', () => {
-                overlayImg.src = img.src;
-                overlay.classList.add('active');
-            });
-        });
+			<div class="evo-block horizon">
+				<div class="evo-header">[ V2.0: OBJECTIVES ]</div>
+				<div class="evo-description-text">
+					Early-stage plans for v2 center on rebuilding Vinocat as a Go-based production system with a stable, deterministic pairing engine, while using Python as an experimentation pipeline to refine models, keeping the runtime clean, fast, and single-language, with ML improvements feeding in asynchronously.
+				</div>
+			</div>
+		</div>
+		
+		<div class="timeline-container">
+			<div class="event">
+				<div class="event-meta">April 2025 // v 0.0.1</div>
+				<div class="event-title">// Genesis</div>
+				<div class="event-description">
+					Hardcoded pairing engine. Dataset limited to < 30 entities (Wine/Dish). Baseline validation of compatibility via < 12 basic pairing rules.
+				</div>
+				<div class="screenshot">
+					<img src="assets/genesis.jpg" alt="Vinocat Genesis v0.0.1">
+				</div>
+			</div>
 
-        overlay.addEventListener('click', () => {
-            overlay.classList.remove('active');
-        });
-    </script>
+			<div class="event">
+				<div class="event-meta">April 2026 // v 0.6.1</div>
+				<div class="event-title">// Current State</div>
+				<div class="event-description">
+					Dataset contains 850+ entities (Wine, Beer, Dish, Cheese). <br><br>
+					Dual-layer scoring engine: Objective compatibility via 56 granular, property-weighted heuristic rules; Subjective personalization via high-dimensional taste-vector association (Collaborative ML).
+				</div>
+				<div class="screenshot">
+					<img src="assets/current.png" alt="Vinocat Current v0.6.1">
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script type="importmap">
+		{
+			"imports": {
+				"three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+			}
+		}
+	</script>
+
+	<script type="module" src="script.js"></script>
+
+	<script>
+		function toggleNav() {
+			const nav = document.getElementById('sidebar');
+			const btn = document.querySelector('.nav-toggle');
+			
+			nav.classList.toggle('active');
+			document.body.classList.toggle('nav-open');
+			
+			if (nav.classList.contains('active')) {
+				btn.innerText = '✦ CLOSE ✦';
+				btn.classList.add('is-active');
+			} else {
+				btn.innerText = '✦ MENU ✦';
+				btn.classList.remove('is-active');
+			}
+		}
+
+		// Lightbox Logic
+		const overlay = document.getElementById('image-overlay');
+		const overlayImg = document.getElementById('overlay-img');
+		const screenshots = document.querySelectorAll('.screenshot img');
+
+		screenshots.forEach(img => {
+			img.addEventListener('click', () => {
+				overlayImg.src = img.src;
+				overlay.classList.add('active');
+			});
+		});
+
+		overlay.addEventListener('click', () => {
+			overlay.classList.remove('active');
+		});
+	</script>
 </body>
 </html>
